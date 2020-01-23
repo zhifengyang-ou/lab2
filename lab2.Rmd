@@ -1,0 +1,89 @@
+---
+title: "lab2"
+author: "Zhifeng Yang"
+date: "1/22/2020"
+output: 
+  html_document:
+    toc: yes
+    toc_float: yes
+    theme: darkly
+    highlights: pygments
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Task 1
+```{r}
+getwd()
+```
+
+# Task 2
+```{r}
+dird=getwd()
+myread=function(csv){
+  fl=paste(dird,csv,sep="/")
+  read.table(fl,header=TRUE,sep=",")
+}
+mpg.df=myread("EPAGAS.csv")
+head(mpg.df)
+```
+
+# Task 3
+```{r}
+I=mpg.df[,1]
+
+#Standardize(transform) into z values
+z=(I-mean(I))/sd(I)
+round(mean(z),3)
+var(z)
+
+# possible outliers
+I[abs(z)>=2 & abs(z)<=3]
+ 
+# defined outliers
+I[abs(z)>3]
+
+# Plot the outliers in red and the possible outliers in blue
+mycol = ifelse(abs(z)>3, "Red",
+        ifelse(abs(z)>=2 &abs(z)<=3,"Blue", "Black"))  
+
+#Plot points with different plotting shapes        
+mypch = ifelse(abs(z)>3, 20,
+        ifelse(abs(z)>=2 &abs(z)<=3,21, 22))
+
+#Use an installed library 
+# You will need to install the "lattice" package -- unless using the Lab computers
+#In R go to Packages   -- select "install packages" choose a mirror and then the "lattice" package
+# Now issue the following commands
+library(lattice)
+dotplot(I,col=mycol)
+```
+
+# Task 4
+```{r}
+boxplot(I,horizontal = T,notch = T)
+title("Boxplot of mpg")
+
+## Using Chebyshev’s theorem predict the proportion of data within 2 standard deviations of the mean of the mpg data
+## At least 1-1/4=3/4
+3/4
+
+## Use R to calculate the exact proportion within 2 standard deviation of the mean.
+length(I[abs(z)<2])/length(I)
+
+## Does Chebyshev agree with the data?
+## yes
+## use the empirical rule
+## 95%
+## How well does it correspond?
+## Very close to 96%
+## Is the Empirical rule valid in this case? Why?
+## Yes, because the value of Empirical rule is approximate to the exact value.
+```
+
+
+
+
+
